@@ -2,7 +2,7 @@
 This tutorial has been designed for the following classes:
 
 - [25-26] Introduction to Algorithms for Modeling Virtual Brain Twins, Psy MSc, IUSS/UNIPV
-- [23-24-25] Brain modelling, AI BSc, UNIMI/PV/B
+- [23-24-25-26] Brain modelling, AI BSc, Human-Centered-IA, UNIMI/PV/B
 - [22-23-24] Numerical methods in Neuroscience, Physics MSc, UNIPI, Pisa, Italy
 - [21-22-23-24] Biorobotics and Complex Systems, Physics MSc, UNIPI, Pisa, Italy
 - [21-22-23] Neural Modeling for Neural Engineering, PhD in Biorobotics, SSSA, Pisa
