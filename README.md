@@ -1,4 +1,4 @@
-# Computational Neuroscience Tutorial 2025
+# Computational Neuroscience Tutorial 
 This tutorial has been designed for the following classes:
 
 - [25-26] Introduction to Algorithms for Modeling Virtual Brain Twins, Psy MSc, IUSS/UNIPV
