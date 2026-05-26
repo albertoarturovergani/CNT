@@ -1,6 +1,7 @@
 # folders
 notebooks/outputs/
-notebooks/intro/reports 
+notebooks/intro/reports
+notebook/intro/..* 
 
 
 # Byte-compiled / optimized / DLL files
