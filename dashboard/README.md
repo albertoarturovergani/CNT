@@ -20,6 +20,19 @@ On Windows, activate with `.venv\Scripts\activate` instead. Open the local addre
 printed by Streamlit. Simulation runs on the machine running Python; students do not
 need a SpiNNaker account. A shared classroom deployment would require a Python server.
 
+## Full tutorial or hosted JupyterLab
+
+The root [`requirements.txt`](../requirements.txt) installs the common notebook tools
+and this dashboard together, including JupyterLab for students running locally;
+this directory's file remains the smaller dashboard-only option. Both use the
+same model and application code on local computers or teaching servers.
+
+Start `launch.py` from a JupyterLab terminal. To open the remote dashboard in your
+browser, follow the [hosted JupyterLab instructions](../docs/environments.md#dashboard-from-hosted-jupyterlab).
+They require Jupyter Server Proxy in the running server environment and configure
+Streamlit's URL prefix to match it. A laptop's localhost URL refers to the laptop;
+the remote application is reached through the authenticated SANDS route.
+
 ## Current implementation
 
 | Interface | Implementation | Scope |
