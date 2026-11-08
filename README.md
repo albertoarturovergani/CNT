@@ -33,6 +33,14 @@ The tutorial can run on a student's computer with Python 3.11 or 3.12. The root
 PyNN/Brian2, TVB example data and surface support, and the dashboard. It includes the
 smaller dashboard requirements file.
 
+Choose the instructions for your computer or teaching server:
+
+| Platform | Step-by-step guide |
+| --- | --- |
+| Ubuntu | [Install, open notebooks and launch the dashboard](docs/quickstart.md#ubuntu) |
+| Windows | [Command Prompt and PowerShell instructions](docs/quickstart.md#windows) |
+| SANDS / JupyterLab | [Select a kernel and check the hosted dashboard route](docs/quickstart.md#sands-hosted-jupyterlab) |
+
 Download CNT with Git, or [download and extract the ZIP](https://github.com/albertoarturovergani/CNT/archive/refs/heads/main.zip):
 
 ```bash
@@ -40,39 +48,61 @@ git clone --depth 1 https://github.com/albertoarturovergani/CNT.git
 cd CNT
 ```
 
-On Linux/macOS, create and activate the course environment:
+### Ubuntu / Linux / macOS
+
+From the repository root, install the course and open the notebooks:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-```
-
-On Windows Command Prompt, use these two commands instead (with Python 3.12 installed):
-
-```bat
-py -3.12 -m venv .venv
-.venv\Scripts\activate.bat
-```
-
-Install the course and open the notebooks:
-
-```bash
 python -m pip install -r requirements.txt
 python -m jupyterlab
 ```
 
-Open a notebook from `notebooks/` in the JupyterLab browser window. To run the
-interactive dashboard from the same environment, open another terminal, activate
-the environment, and run:
+For the dashboard, use a terminal in the repository root with the environment active:
 
 ```bash
 cd dashboard
 python launch.py
 ```
 
-Use the local browser URL printed by the launcher. See the
-[installation guide](docs/environments.md) for existing environments, optional
-hardware examples and hosted JupyterLab installations.
+### Windows PowerShell
+
+With Python 3.11 or 3.12 selected, run from the repository root. These commands use
+the environment's Python directly, so an activation script is unnecessary:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe -m jupyterlab
+```
+
+For the dashboard, use another PowerShell window in the repository root:
+
+```powershell
+cd dashboard
+..\.venv\Scripts\python.exe launch.py
+```
+
+If `.venv` was instead created inside `dashboard/`, use
+`.\.venv\Scripts\python.exe launch.py` from that directory. The
+[Windows guide](docs/quickstart.md#windows) includes installation for that case and
+the Command Prompt alternative. `source .venv/bin/activate` is a bash command.
+
+In either local setup, open a notebook from `notebooks/` in JupyterLab or open the
+local browser URL printed by the dashboard launcher. Keep its terminal running.
+See the
+[usage guide](docs/quickstart.md#use-the-dashboard) for running experiments and
+downloading results, or the [environment guide](docs/environments.md) for more detail.
+
+### SANDS / hosted JupyterLab
+
+Use the same root requirements in a dedicated CPU environment, register it as the
+**CNT (Brian2 / TVB)** kernel and open the notebooks in SANDS's existing JupyterLab
+window. Follow the [SANDS instructions](docs/quickstart.md#sands-hosted-jupyterlab).
+The dashboard additionally needs the platform's authenticated proxy route, whose
+availability is not confirmed. Use the local Ubuntu or Windows procedure if that
+remote route is unavailable.
 
 ## Optional: SpiNNaker hardware examples
 

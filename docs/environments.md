@@ -1,5 +1,8 @@
 # Installing CNT: student computers and teaching servers
 
+For the student-facing commands and instructions on opening lessons and experiments,
+use the [Ubuntu, Windows and SANDS quick-start guide](quickstart.md).
+
 ## Choose the installation scope
 
 | File or environment | Use |

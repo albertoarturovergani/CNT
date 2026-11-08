@@ -4,9 +4,26 @@ A first teaching interface for **one neuron** and **one isolated population or o
 Run simulations, vary native parameters and input waveforms, inspect state trajectories,
 and download traces and the configuration needed to repeat an experiment.
 
-## Run locally
+## Start the full tutorial
+
+The [step-by-step usage guide](../docs/quickstart.md) covers installation, opening
+notebooks and using the dashboard with one shared course environment:
+
+| Platform | Instructions |
+| --- | --- |
+| Ubuntu | [Local setup and startup](../docs/quickstart.md#ubuntu) |
+| Windows | [Command Prompt and PowerShell setup](../docs/quickstart.md#windows) |
+| SANDS | [Hosted JupyterLab and conditional proxy route](../docs/quickstart.md#sands-hosted-jupyterlab) |
+
+For a first check, use the local instructions. Dashboard access through SANDS's proxy
+is not confirmed. The [dashboard usage section](../docs/quickstart.md#use-the-dashboard)
+explains the tabs, run buttons and result downloads.
+
+## Smaller dashboard-only installation
 
 Python 3.11 or 3.12 is recommended for this first version. From the CNT repository:
+
+### Ubuntu / Linux / macOS
 
 ```bash
 cd dashboard
@@ -16,7 +33,34 @@ python -m pip install -r requirements.txt
 python launch.py
 ```
 
-On Windows, activate with `.venv\Scripts\activate` instead. Open the local address
+### Windows PowerShell
+
+From the repository root, with Python 3.11 or 3.12 selected:
+
+```powershell
+cd dashboard
+python -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+.\.venv\Scripts\python.exe launch.py
+```
+
+If you are already in `dashboard/` with its `.venv` created, run just the last two
+commands. PowerShell does not use the bash `source` command.
+
+### Windows Command Prompt
+
+Use the following instead, starting from the repository
+root with Python 3.12 installed:
+
+```bat
+cd dashboard
+py -3.12 -m venv .venv
+.venv\Scripts\activate.bat
+python -m pip install -r requirements.txt
+python launch.py
+```
+
+Open the local address
 printed by Streamlit. Simulation runs on the machine running Python; students do not
 need a SpiNNaker account. A shared classroom deployment would require a Python server.
 
