@@ -129,12 +129,13 @@ def simulate_single(config=SingleConfig(), overrides=None):
             sim.end()
 
 
-def simulate_network(config=NetworkConfig(), overrides=None):
+def simulate_network(config=NetworkConfig(), overrides=None, *, record_analog_cells=None):
     _validate_time(config.duration_ms, config.dt_ms)
     if not np.isfinite(list(asdict(config).values())).all():
         raise ValueError("Network parameters must be finite.")
-    if not isinstance(config.n_cells, (int, np.integer)) or not 10 <= config.n_cells <= 3000:
-        raise ValueError("The dashboard supports 10–3000 neurons.")
+    max_cells = 5000 if record_analog_cells is not None else 3000
+    if not isinstance(config.n_cells, (int, np.integer)) or not 10 <= config.n_cells <= max_cells:
+        raise ValueError(f"The dashboard supports 10–{max_cells} neurons with this recording mode.")
     if not 1 <= config.n_external <= 200 or not 0 <= config.seed < 2**32:
         raise ValueError("Use 1–200 external cells and an unsigned 32-bit seed.")
     if not config.dt_ms <= config.delay_ms <= 100 or not np.isclose(config.delay_ms / config.dt_ms, round(config.delay_ms / config.dt_ms)):
@@ -146,7 +147,8 @@ def simulate_network(config=NetworkConfig(), overrides=None):
     # Bound worst-case dense connectivity to keep this interactive exercise usable.
     if config.n_cells**2 * config.probability > 1_000_000:
         raise ValueError("Reduce size or connection probability to at most 1 million expected recurrent synapses.")
-    if config.n_cells * (config.duration_ms / config.dt_ms + 1) * 3 > 15_000_000:
+    analog_cells = config.n_cells if record_analog_cells is None else min(config.n_cells, 2 * record_analog_cells)
+    if analog_cells * (config.duration_ms / config.dt_ms + 1) * 3 > 15_000_000:
         raise ValueError("Reduce neurons/duration or increase dt: the dashboard records at most 15 million analog values per run.")
     parameters = _cell_parameters(NETWORK_PARAMETERS, overrides)
     import brian2 as b
@@ -166,7 +168,11 @@ def simulate_network(config=NetworkConfig(), overrides=None):
             pops = {"exc": sim.Population(n_exc, sim.IF_cond_exp(**parameters), label="Excitatory_Cells"),
                     "inh": sim.Population(config.n_cells - n_exc, sim.IF_cond_exp(**parameters), label="Inhibitory_Cells")}
             for pop in pops.values():
-                pop.record(["spikes", "v", "gsyn_exc", "gsyn_inh"])
+                if record_analog_cells is None:
+                    pop.record(["spikes", "v", "gsyn_exc", "gsyn_inh"])
+                else:
+                    pop.record("spikes")
+                    pop[:min(record_analog_cells, len(pop))].record(["v", "gsyn_exc", "gsyn_inh"])
                 pop.initialize(v=RandomDistribution("uniform", [parameters["v_reset"], parameters["v_thresh"]], rng=new_rng()))
             projections = {}
             for pre in ("exc", "inh"):
@@ -214,6 +220,7 @@ def simulate_network(config=NetworkConfig(), overrides=None):
                 "External delay is explicitly set to the configured minimum delay (2 ms in the notebook preset).",
                 "CPU backend selected explicitly; dashboard plots/downloads replace notebook file writes."]
             result["configuration"]["random_stream_seeds"] = stream_seeds
+            result["configuration"]["analog_cells_per_population"] = record_analog_cells or "all"
             return result
         finally:
             sim.end()

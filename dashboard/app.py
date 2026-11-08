@@ -19,6 +19,8 @@ from cnt_dashboard.model_notes import CELL_EQUATIONS, CELL_NOTES, cell_glossary,
 from cnt_dashboard.population_notes import population_notes
 from cnt_dashboard.references import model_references
 from cnt_dashboard.experiment_pages import render_single, render_network, voltage_checkboxes
+from cnt_dashboard.notebook_catalogue import SINGLE_LABELS, NETWORK_LABELS
+from cnt_dashboard.notebook_pages import render_notebook
 
 REPO = "https://github.com/albertoarturovergani/CNT/blob/main/"
 st.set_page_config(page_title="CNT · Neural model laboratory", page_icon="🧠", layout="wide")
@@ -93,9 +95,11 @@ def downloads(result, population=False):
 
 
 with single_cell_tab:
-    cell_page = st.radio("Single-cell experiment", ["Model explorer", "PyNN notebook"], horizontal=True, key="single-cell-page")
+    cell_page = st.radio("Single-cell experiment", ["Model explorer", "PyNN notebook", *SINGLE_LABELS], horizontal=True, key="single-cell-page")
     if cell_page == "PyNN notebook":
         render_single()
+    elif cell_page in SINGLE_LABELS:
+        render_notebook(SINGLE_LABELS[cell_page])
     else:
         controls, output = st.columns([1, 2], gap="large")
         with controls:
@@ -266,7 +270,11 @@ with population_tab:
 
 
 with spiking_network_tab:
-    render_network()
+    network_page = st.selectbox("Network experiment", [*NETWORK_LABELS, "PyNN E/I benchmark"], key="spiking-network-page")
+    if network_page == "PyNN E/I benchmark":
+        render_network()
+    else:
+        render_notebook(NETWORK_LABELS[network_page])
 
 with large_network_tab:
     st.subheader("Large Scale · Network")
@@ -279,7 +287,7 @@ with st.expander("Catalogue & roadmap"):
     st.subheader("Teaching sequence")
     st.markdown("1. **Single neuron:** input, membrane dynamics, adaptation and spike generation.\n"
                 "2. **Single population:** state variables, local interactions and oscillations.\n"
-                "3. **Spiking network:** the existing PyNN E/I notebook, with editable inputs and connectivity.\n"
+                "3. **Spiking lessons:** single clique, local model comparison, feedforward decay, divergent/small-world connectivity and E/I benchmarks.\n"
                 "4. **Large Scale network, next stage:** compare connectivity while keeping node dynamics and inputs fixed.")
     st.subheader("Single-neuron catalogue")
     st.dataframe([{"model": spec.label, "status": "Runnable with Brian2", "input unit": spec.input_unit}

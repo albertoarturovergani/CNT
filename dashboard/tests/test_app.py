@@ -12,6 +12,7 @@ def test_both_experiment_forms_run_and_render_without_errors():
     app = AppTest.from_file(str(APP)).run(timeout=60)
     assert not app.exception
     assert not app.error
+
     app.button(key="FormSubmitter:cell-form-lif-Run single neuron").click().run(timeout=60)
     assert not app.exception
     assert not app.error
@@ -63,6 +64,7 @@ def test_voltage_checkboxes_redraw_completed_run_without_simulating_again():
 
 def test_pynn_single_and_network_pages_run_and_export():
     app = AppTest.from_file(str(APP)).run(timeout=60)
+    app.selectbox(key="spiking-network-page").select("PyNN E/I benchmark").run(timeout=60)
     app.radio(key="single-cell-page").set_value("PyNN notebook").run(timeout=60)
     app.button(key="FormSubmitter:pynn-single-form-Run PyNN single cell").click().run(timeout=60)
     assert not app.exception
@@ -82,3 +84,33 @@ def test_pynn_single_and_network_pages_run_and_export():
     app.selectbox(key="pynn-network-trace-pop").select("inh").run(timeout=60)
     assert not app.exception
     assert not app.error
+
+
+def test_new_notebook_pages_render_run_and_keep_hardware_stdp_link_only():
+    app = AppTest.from_file(str(APP)).run(timeout=60)
+    app.radio(key="single-cell-page").set_value("Single clique").run(timeout=60)
+    app.button(key="FormSubmitter:lesson-form-single_clique-Run experiment").click().run(timeout=60)
+    assert not app.exception
+    assert not app.error, [error.value for error in app.error]
+    assert "lesson-result-single_clique" in app.session_state
+    app.radio(key="single-cell-page").set_value("STDP").run(timeout=60)
+    assert not any("lesson-form-stdp" in str(button.key) for button in app.button)
+    assert any("SpiNNaker" in item.value for item in app.info)
+    app.radio(key="single-cell-page").set_value("Testing cell models network").run(timeout=60)
+    app.multiselect(key="lesson-comparison-models").set_value(["PyNN · IF_cond_exp", "Brian2 · Leaky integrate-and-fire"])
+    app.number_input(key="lesson-cell_models-duration_ms").set_value(100.)
+    app.number_input(key="lesson-cell_models-start_ms").set_value(10.)
+    app.number_input(key="lesson-cell_models-stop_ms").set_value(90.)
+    app.button(key="FormSubmitter:lesson-form-cell_models-Run experiment").click().run(timeout=60)
+    assert not app.exception
+    assert not app.error, [error.value for error in app.error]
+    assert len(app.session_state["lesson-result-cell_models"]["populations"]) == 2
+    for label, key in [("Decaying network", "decaying"), ("Diverging network", "diverging"), ("Small World network", "small_world"), ("Balance network · Brian2", "balance_brian2")]:
+        app.selectbox(key="spiking-network-page").select(label).run(timeout=60)
+        app.number_input(key=f"lesson-{key}-n_cells").set_value(20)
+        if key == "balance_brian2":
+            app.number_input(key=f"lesson-{key}-duration_ms").set_value(100.)
+        app.button(key=f"FormSubmitter:lesson-form-{key}-Run experiment").click().run(timeout=90)
+        assert not app.exception
+        assert not app.error, [error.value for error in app.error]
+        assert f"lesson-result-{key}" in app.session_state
