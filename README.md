@@ -26,20 +26,66 @@ protocols, editable parameters, state traces and reproducible CSV/JSON exports. 
 [dashboard instructions](dashboard/README.md) for installation, current model coverage
 and the network-development roadmap.
 
-## CNT repository on the SpiNNaker neuromorphic system:
+## Student quick start: run locally
 
-1. make the [EBRAINS](https://www.ebrains.eu/news-and-events/addressing-the-mental-health-crisis-with-personalised-treatment-the-launch-of-the-virtual-brain-twin-project?_cldee=z3bx-t-X2WwYH_Ns69VC9kWyaW8VAwaVjMyz-P_vECfCWAdUYljKJvU80RoorvbIqKFnJHI0gre1ubrl7O-BVA&recipientid=contact-48c6764f990ded1182e40022489c5256-e666155866e2475f9b116c5c1ab32fb0&esid=b2e9e86d-e4e2-ee11-904c-002248a43fb1) credentials to access the SpiNNaker server (https://sands.cs.man.ac.uk/)
-1. login on the Jupyter Lab interface
+The tutorial can run on a student's computer with Python 3.11 or 3.12. The root
+[`requirements.txt`](requirements.txt) installs JupyterLab, the common notebook tools,
+PyNN/Brian2, TVB example data and surface support, and the dashboard. It includes the
+smaller dashboard requirements file.
 
-<!-- 1. install [brian2](https://brian2.readthedocs.io/en/stable/index.html) simulator `pip install brain2`
-1. install [PyNN](http://neuralensemble.org/docs/PyNN/installation.html) module `pip install PyNN`
-1. install [TVB](https://github.com/the-virtual-brain/tvb-root/tree/master) module `pip install tvb-library tvb-framework`-->
+Download CNT with Git, or [download and extract the ZIP](https://github.com/albertoarturovergani/CNT/archive/refs/heads/main.zip):
 
-1. clone this repository `git clone https://github.com/albertoarturovergani/CNT`
-1. Open the directory `notebooks/` and run a test with [balance network](notebooks/intro/paper_balance-network.ipynb) by selecting the sPyNNaker kernel or Python3 kernel
-1. Note that you should install the python modules which the notebooks need. Once you run, in relation to the installation requests and the kernel selected (python vs sPyNNaker), please do `pip install <given-module>`; in principle, you should install the following packages: `pip install pyNN brian2 matplotlib fooof networkx pandas seaborn`. This procedure has to be done for both the kernels.
+```bash
+git clone --depth 1 https://github.com/albertoarturovergani/CNT.git
+cd CNT
+```
 
-1. if you receive any errors, write to albertoarturo.vergani@unipv.it
+On Linux/macOS, create and activate the course environment:
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+```
+
+On Windows Command Prompt, use these two commands instead (with Python 3.12 installed):
+
+```bat
+py -3.12 -m venv .venv
+.venv\Scripts\activate.bat
+```
+
+Install the course and open the notebooks:
+
+```bash
+python -m pip install -r requirements.txt
+python -m jupyterlab
+```
+
+Open a notebook from `notebooks/` in the JupyterLab browser window. To run the
+interactive dashboard from the same environment, open another terminal, activate
+the environment, and run:
+
+```bash
+cd dashboard
+python launch.py
+```
+
+Use the local browser URL printed by the launcher. See the
+[installation guide](docs/environments.md) for existing environments, optional
+hardware examples and hosted JupyterLab installations.
+
+## Optional: SpiNNaker hardware examples
+
+Some notebooks use sPyNNaker-specific neuron or plasticity models and require a
+SpiNNaker hardware environment. On [SANDS](https://sands.cs.man.ac.uk/), select the
+managed **sPyNNaker** kernel for the
+[hardware balanced-network example](notebooks/intro/paper_balance-network_sPyNNaker.ipynb).
+Platform access uses [EBRAINS](https://www.ebrains.eu/) credentials. The common
+student setup and dashboard use Brian2/TVB on the CPU. The same repository can be
+used locally or on a teaching server; see the
+[hosted JupyterLab notes](docs/environments.md#dashboard-from-hosted-jupyterlab).
+
+For course issues, write to albertoarturo.vergani@unipv.it.
 
 ## Content:
 - [Main Course Notebook](notebooks/intro/CNT_notebook.ipynb)

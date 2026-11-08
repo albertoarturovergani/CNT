@@ -1,0 +1,23 @@
+# CNT course runtime: notebook tools, CPU simulators and the dashboard.
+# Use a dedicated environment; Python 3.11/3.12 is recommended.
+# The SpiNNaker hardware backend is an optional, separately managed environment.
+-r dashboard/requirements.txt
+
+# Direct notebook imports and recorded-data handling.
+csa>=0.1.12,<1
+fooof>=1.1,<2
+h5py>=3.10,<4
+ipykernel>=6.29,<8
+jupyterlab>=4.2,<5
+matplotlib>=3.7,<4
+neo>=0.13.4,<0.15
+networkx>=3,<4
+pandas>=1.5,<3
+PyNN>=0.12.3,<0.14
+quantities>=0.16,<1
+scipy>=1.10,<2
+seaborn>=0.13,<1
+
+# Connectivity, surface and sensor examples used by the TVB notebooks.
+tvb-data>=3,<4
+tvb-gdist>=2.9,<3
