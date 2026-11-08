@@ -1,8 +1,9 @@
 # CNT neural model dashboard
 
-A first teaching interface for **one neuron** and **one isolated population or oscillator**.
+A teaching interface organized into **Spiking** and **Large Scale**.
 Run simulations, vary native parameters and input waveforms, inspect state trajectories,
-and download traces and the configuration needed to repeat an experiment.
+and download traces and the configuration needed to repeat an experiment. The Spiking
+pages also translate two existing CNT PyNN notebooks into interactive experiments.
 
 ## Start the full tutorial
 
@@ -81,9 +82,12 @@ the remote application is reached through the authenticated SANDS route.
 
 | Interface | Implementation | Scope |
 | --- | --- | --- |
-| Single neuron | Native Brian2 `NeuronGroup`, explicit `Network` and clock | LIF, Izhikevich, AdEx, Hodgkin-Huxley, Morris-Lecar |
-| Population & oscillator | Native TVB `Simulator` | Every concrete class registered in the installed `ModelsEnum` |
-| Catalogue & roadmap | Source and implementation status | GLIF/E-GLIF integration and later network experiments |
+| Spiking → Single cell → Model explorer | Native Brian2 `NeuronGroup`, explicit `Network` and clock | LIF, Izhikevich, AdEx, Hodgkin-Huxley, Morris-Lecar |
+| Spiking → Single cell → PyNN notebook | PyNN with the Brian2 backend | Original `eg_single-cell` AC + step experiment |
+| Spiking → Network | PyNN with the Brian2 backend | Original CNT E/I Vogels–Abbott benchmark variant |
+| Large Scale → Single node | Native TVB `Simulator` | Every concrete class registered in the installed `ModelsEnum` |
+| Large Scale → Network | Placeholder | Future TVB connectivity experiments |
+| Catalogue & roadmap (expandable) | Source and implementation status | GLIF/E-GLIF integration and later experiments |
 
 The TVB registry in the tested installation, `tvb-library 2.10.0`, contains 28 concrete
 classes. The interface discovers the registry at runtime; it does not embed a fixed
@@ -91,7 +95,67 @@ list. Unregistered `contrib`, DSL and external extensions are not automatically 
 The catalogue includes neural masses, mean-field reductions and phenomenological
 oscillators; these names describe different modeling assumptions.
 
-### Single neuron
+### Equations, units, voltage references and bibliography
+
+Selecting a model exposes its equations before running a simulation, with a separate
+table of symbols, term descriptions and units, and publications linked by DOI or an
+original-source URL. Model-family foundations and later implemented variants are
+identified separately. The 28 TVB equation entries were checked against native TVB
+2.10.0 derivative functions for the **isolated-node** case; their installed class
+source is also available in an expander. Normalized quantities and units not declared
+by TVB are labeled explicitly rather than presented as membrane voltage/current.
+
+After a single-cell run, checkboxes show/hide reference lines on the voltage panel.
+They use the **completed run's** values and change only the plot. Editing a form
+without submitting does not move these lines. Coincident references share one label.
+
+| Reference | Interpretation |
+| --- | --- |
+| Vrest / EL | Passive resting voltage for LIF/PyNN; leak reversal for nonlinear conductance models |
+| Vthreshold | Explicit threshold for LIF/PyNN; AdEx VT is labeled exponential onset |
+| Vreset | Reset voltage, only for models with a reset rule |
+| Vdetect | Spike-counting cutoff for HH, Morris–Lecar and Izhikevich; AdEx uses VT + 5 DeltaT |
+
+HH and Morris–Lecar have no reset rule. HH's VT shifts the channel kinetics and is
+not a detection threshold. Izhikevich's displayed levels use the adapter's scaled
+model-voltage convention. There is no universal model parameter called `Vdirect`;
+the interface distinguishes resting/leak references from spike detection.
+
+### PyNN notebook experiments
+
+| Dashboard page | Notebook | Original preset |
+| --- | --- | --- |
+| Single cell → PyNN notebook | [`eg_single-cell.ipynb`](../notebooks/intro/eg_single-cell.ipynb) | One `IF_cond_exp`; dt 1 ms; 800 ms; AC 10 nA at 10 Hz from 100–400 ms; step 10 nA from 600–610 ms |
+| Spiking → Network | [`paper_balance-network_sPyNNaker.ipynb`](../notebooks/intro/paper_balance-network_sPyNNaker.ipynb) | 1500 `IF_cond_exp`, E:I = 4:1; dt 1 ms; delay 2 ms; 1000 ms; recurrent probability 0.02; weights 0.004/0.051 uS; 20 Poisson cells at 100 Hz for 50 ms |
+
+The dashboard explicitly selects `pyNN.brian2`, including for the notebook whose
+filename contains `sPyNNaker`. It preserves the model, cell parameters, stimulus
+and six projection types. It does not require SpiNNaker hardware. Source links and
+downloaded configurations identify the notebook and source commit. The standalone
+Brian2 model explorer remains a separate set of experiments, with different presets.
+
+The network notebook did not seed every random stream. This adapter explicitly
+seeds independent child streams for PyNN projections/initialization and Brian2 Poisson generation; random draws
+may therefore differ from a notebook run, while repeated dashboard runs with the
+same seed reproduce the same connections and spikes. The external projection delay
+is explicit (2 ms in the preset). Network topology is currently fixed-probability;
+changing size/probability does not preserve in-degree or firing-rate balance.
+
+Plots include the original voltage/spike/input views for the cell, E/I/external
+rasters for the network, a binned connection matrix for each projection, and
+voltage/conductance traces for a selected recorded cell.
+Download configuration JSON, spike CSV and cell trace CSV or all network analog
+traces as a compressed NPZ file. The exact network connection list is available as
+CSV with pre/post indices, conductance weights and delays. PyNN units are mV, ms, nA, nF and uS. The single-cell
+notebook's 0.1 ms refractory setting is retained despite its 1 ms simulation clock;
+reduce dt to examine discrete-time effects.
+
+Interactive network runs are limited to 3000 cells, 1 million expected recurrent
+connections and 15 million analog samples. Reduce the size/duration, probability,
+or increase dt if a limit is reached. Notebook-specific SpiNNaker extra models,
+plasticity exercises and other network notebooks still need individual adapters.
+
+### Single neuron model explorer
 
 * Step, ramp and sine inputs, including negative amplitudes.
 * Explicit units, editable parameters and integration step.
@@ -186,8 +250,8 @@ the implementation currently running in this dashboard.
 
 ## Next stage: network dynamics
 
-Add separate spiking and population-network experiments after the isolated-node
-interfaces are settled. Suggested sequence: disconnected nodes, connected pair, ring,
+Extend the first PyNN spiking-network page and add TVB network experiments.
+Suggested sequence: disconnected nodes, connected pair, ring,
 random graph, small-world graph, modular graph and empirical connectivity.
 
 For a topology comparison, control node count, density, directedness, weight and delay
@@ -203,13 +267,18 @@ python -m pip install -r requirements-dev.txt
 python -m pytest -q
 ```
 
-The checks include the analytic passive-membrane and TVB Linear solutions, finite
+The checks include analytic passive-membrane and TVB Linear solutions, finite
 single-cell trajectories with detected spikes, all-state/multi-mode TVB recording,
-replay from exported initial conditions, and execution of both Streamlit forms.
-All 16 tests passed. These are software and numerical checks, not electrophysiological
-fitting validation.
+replay from exported initial conditions, PyNN current-waveform/RC checks, seeded
+network replay, and execution of the Streamlit forms. UI checks verify that voltage
+checkboxes change the voltage panel without rerunning or modifying a simulation.
+These are software and numerical checks, not electrophysiological fitting validation.
 
-Verified with Python 3.12, Brian2 2.10.1, TVB library 2.10.0, Streamlit 1.67.0,
+The PyNN/Brian2 adapter deactivates empty native synapse objects before a run (they
+have no connections), and reads connectivity through PyNN's array format to handle
+single-connection projections correctly. Both cases are covered by the checks.
+
+Verified with Python 3.12, PyNN 0.13.0, Brian2 2.10.1, TVB library 2.10.0, Streamlit 1.67.0,
 Plotly 7.1.0 and NumPy 2.3.5. In addition to the tests, all 28 installed TVB classes
 completed a default isolated-node run of 200 ms at dt = 0.05 ms with finite states.
 Browser layout inspection was unavailable in the development preview environment;

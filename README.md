@@ -20,9 +20,11 @@ TheVirtualBrain is a framework for the simulation of the dynamics of large-scale
 
 ## Interactive neural model dashboard
 
-The new [`dashboard/`](dashboard/) provides a Streamlit interface for single-compartment
-neurons (Brian2) and isolated population models or oscillators (TVB). It includes input
-protocols, editable parameters, state traces and reproducible CSV/JSON exports. See the
+The [`dashboard/`](dashboard/) provides **Spiking** pages for single-compartment neurons
+and the existing PyNN single-cell/E/I network experiments, and **Large Scale** pages
+for isolated TVB population models or oscillators (with a network placeholder).
+It includes explicit equations, terms/units, bibliography, editable inputs/parameters,
+voltage-reference checkboxes, state traces and result downloads. See the
 [dashboard instructions](dashboard/README.md) for installation, current model coverage
 and the network-development roadmap.
 

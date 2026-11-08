@@ -244,13 +244,21 @@ chosen above. Open the printed local URL, or the platform's proxy URL for a host
 
 | Tab | Experiment |
 | --- | --- |
-| **Single neuron** | Select a model, waveform, input amplitude and timing. Optionally edit model parameters, then press **Run single neuron**. Inspect voltage, spike events, applied input and the available state-space trajectory. |
-| **Population & oscillator** | Select a TVB model, duration, integration step and initial-condition seed. Optionally edit native parameters, then press **Run isolated population**. Select the state variables to plot. |
-| **Catalogue & roadmap** | Check model availability and the planned extensions. GLIF/E-GLIF and network experiments remain listed as pending. |
+| **Spiking → Single cell → Model explorer** | Select a model, read its equations, units and bibliography, edit inputs/parameters, then press **Run single neuron**. Use the voltage-reference checkboxes to show/hide levels without rerunning. |
+| **Spiking → Single cell → PyNN notebook** | Run the existing single-cell notebook experiment: an `IF_cond_exp` cell with AC and step currents. The controls start from the notebook's original values. |
+| **Spiking → Network** | Run the PyNN E/I network notebook. Change neuron count, connection probability, weights or Poisson stimulation; inspect rasters and the voltage/conductances of a recorded cell. |
+| **Large Scale → Single node** | Select a TVB model, inspect equations/terms/references, then edit native parameters, duration, integration step and initial conditions. Press **Run isolated population** and choose the states to plot. |
+| **Large Scale → Network** | Placeholder for future TVB network experiments. |
+| **Catalogue & roadmap** | Expand this panel to check model availability. GLIF/E-GLIF and additional notebook adapters are still pending. |
 
 Use the CSV and JSON download buttons to save traces, spike times and the completed
 run's configuration. Read the units shown for each model before comparing inputs.
 After changing a form value, press its **Run** button again to generate a new result.
+Plot-only controls reuse the completed run. PyNN network analog traces download as
+NPZ (open with `numpy.load`); the CSV download contains the spike events. Its seeded
+random streams make dashboard reruns reproducible, but individual connections/spikes
+can differ from the original notebook's unseeded streams. Start with fewer neurons
+for a faster classroom exercise. These PyNN pages explicitly use Brian2 in local CPU mode.
 
 ## Reopen or update CNT
 
