@@ -18,6 +18,14 @@ PyNN is a Python library for simulating neural networks. It provides a common in
 
 TheVirtualBrain is a framework for the simulation of the dynamics of large-scale brain networks with biologically realistic connectivity. TheVirtualBrain uses tractographic data (DTI/DSI) to generate connectivity matrices and build cortical and subcortical brain networks. The connectivity matrix defines the connection strengths and time delays via signal transmission between all network nodes. Various neural mass models are available in the repertoire of TheVirtualBrain and define the dynamics of a network node. Together, the neural mass models at the network nodes and the connectivity matrix define the Virtual Brain. TheVirtualBrain simulates and generates the time courses of various forms of neural activity including Local Field Potentials (LFP) and firing rate, as well as brain imaging data such as EEG, MEG and BOLD activations as observed in fMRI. TheVirtualBrain is foremost a scientific simulation platform and provides all means necessary to generate, manipulate and visualize connectivity and network dynamics. In addition, TheVirtualBrain comprises a set of classical time series analysis tools, structural and functional connectivity analysis tools, as well as parameter exploration facilities by launching parallel simulations on a cluster.
 
+## Interactive neural model dashboard
+
+The new [`dashboard/`](dashboard/) provides a Streamlit interface for single-compartment
+neurons (Brian2) and isolated population models or oscillators (TVB). It includes input
+protocols, editable parameters, state traces and reproducible CSV/JSON exports. See the
+[dashboard instructions](dashboard/README.md) for installation, current model coverage
+and the network-development roadmap.
+
 ## CNT repository on the SpiNNaker neuromorphic system:
 
 1. make the [EBRAINS](https://www.ebrains.eu/news-and-events/addressing-the-mental-health-crisis-with-personalised-treatment-the-launch-of-the-virtual-brain-twin-project?_cldee=z3bx-t-X2WwYH_Ns69VC9kWyaW8VAwaVjMyz-P_vECfCWAdUYljKJvU80RoorvbIqKFnJHI0gre1ubrl7O-BVA&recipientid=contact-48c6764f990ded1182e40022489c5256-e666155866e2475f9b116c5c1ab32fb0&esid=b2e9e86d-e4e2-ee11-904c-002248a43fb1) credentials to access the SpiNNaker server (https://sands.cs.man.ac.uk/)
