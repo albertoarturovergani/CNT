@@ -28,6 +28,11 @@ voltage-reference checkboxes, state traces and result downloads. See the
 [dashboard instructions](dashboard/README.md) for installation, current model coverage
 and the network-development roadmap.
 
+Spiking lessons also include Single clique, a
+[new local cell-model comparison notebook](notebooks/intro/eg_testing-cell-models-local.ipynb),
+Decaying, Diverging, Small World and the 4000-cell Brian2 COBA benchmark. SpiNNaker-only
+models and the original STDP experiment are linked to their source notebooks.
+
 ## Student quick start: run locally
 
 The tutorial can run on a student's computer with Python 3.11 or 3.12. The root
@@ -129,6 +134,7 @@ For course issues, write to albertoarturo.vergani@unipv.it.
 - [Example: Single Clique](notebooks/intro/eg_single-clique.ipynb)
 - [Example: Small-World Network](notebooks/intro/eg_small-world-network.ipynb)
 - [Testing: Cell Models in the Network](notebooks/intro/eg_testing-cell-models-network.ipynb)
+- [Testing: All locally supported PyNN/Brian2 and CNT Brian2 cell models](notebooks/intro/eg_testing-cell-models-local.ipynb)
 - [Testing: STDP Model in the Network](notebooks/intro/eg_testing-STDP-model-network.ipynb)
 - [Exercise: Network A](notebooks/intro/ex_network_A.ipynb)
 - [Exercise: Network B](notebooks/intro/ex_network_B.ipynb)

@@ -3,7 +3,8 @@
 A teaching interface organized into **Spiking** and **Large Scale**.
 Run simulations, vary native parameters and input waveforms, inspect state trajectories,
 and download traces and the configuration needed to repeat an experiment. The Spiking
-pages also translate two existing CNT PyNN notebooks into interactive experiments.
+pages translate CNT's introductory notebooks into interactive experiments and link
+hardware-only lessons to their original SpiNNaker versions.
 
 ## Start the full tutorial
 
@@ -84,7 +85,10 @@ the remote application is reached through the authenticated SANDS route.
 | --- | --- | --- |
 | Spiking → Single cell → Model explorer | Native Brian2 `NeuronGroup`, explicit `Network` and clock | LIF, Izhikevich, AdEx, Hodgkin-Huxley, Morris-Lecar |
 | Spiking → Single cell → PyNN notebook | PyNN with the Brian2 backend | Original `eg_single-cell` AC + step experiment |
-| Spiking → Network | PyNN with the Brian2 backend | Original CNT E/I Vogels–Abbott benchmark variant |
+| Spiking → Single cell → Single clique | PyNN with the Brian2 backend | Reciprocal excitatory/inhibitory two-cell circuit |
+| Spiking → Single cell → Testing cell models network | Shared notebook/dashboard engine | All 10 injectable native PyNN/Brian2 neuron classes plus the 5 CNT Brian2 adapters |
+| Spiking → Single cell → STDP | Original notebook link | SpiNNaker experiment; its dendritic-delay rule is preserved |
+| Spiking → Network | Source-linked experiment selector | Decaying, Diverging, Small World, Balance network · Brian2, and the existing PyNN E/I benchmark |
 | Large Scale → Single node | Native TVB `Simulator` | Every concrete class registered in the installed `ModelsEnum` |
 | Large Scale → Network | Placeholder | Future TVB connectivity experiments |
 | Catalogue & roadmap (expandable) | Source and implementation status | GLIF/E-GLIF integration and later experiments |
@@ -122,6 +126,71 @@ model-voltage convention. There is no universal model parameter called `Vdirect`
 the interface distinguishes resting/leak references from spike detection.
 
 ### PyNN notebook experiments
+
+Choose **Single clique**, **Testing cell models network** or **STDP** beside the
+existing model explorer/single-cell page. In **Spiking → Network**, choose the
+experiment with the selector at the top. A run uses the displayed controls;
+plotting controls reuse the completed result.
+
+| Additional lesson | Source | Local behavior |
+| --- | --- | --- |
+| Single clique | [`eg_single-clique.ipynb`](../notebooks/intro/eg_single-clique.ipynb) | Two default `IF_cond_exp` cells; 1 uS excitatory/inhibitory reciprocal weights; 1 ms delay; 10 nA step to cell0 at 30–40 ms |
+| Testing cell models network | **New** [`eg_testing-cell-models-local.ipynb`](../notebooks/intro/eg_testing-cell-models-local.ipynb) | Native PyNN neurons and all existing CNT Brian2 cells, using the same comparison engine as the dashboard |
+| Original cell-model comparison | [`eg_testing-cell-models-network.ipynb`](../notebooks/intro/eg_testing-cell-models-network.ipynb) | Link to its synaptic-input/SpiNNaker version, including the four hardware-specific extra models |
+| STDP | [`eg_testing-STDP-model-network.ipynb`](../notebooks/intro/eg_testing-STDP-model-network.ipynb) | Link to the original SpiNNaker experiment; no local axonal-delay substitute |
+| Decaying network | [`eg_decaying-network.ipynb`](../notebooks/intro/eg_decaying-network.ipynb) | 100 cells; no recurrence; central 40–60% receives five jittered input spikes per source |
+| Diverging network | [`eg_diverging-network.ipynb`](../notebooks/intro/eg_diverging-network.ipynb) | 100 excitatory cells; deterministic distance/probability cutoff and distance-dependent delays |
+| Small World network | [`eg_small-world-network.ipynb`](../notebooks/intro/eg_small-world-network.ipynb) | Explicit local-plus-rewired E/I edge lists for the CPU backend; source version remains linked |
+| Balance network · Brian2 | [`paper_balance-network_brian2.ipynb`](../notebooks/intro/paper_balance-network_brian2.ipynb), [`VAbenchmarks.py`](../notebooks/intro/scripts/VA/VAbenchmarks.py) | COBA script preset: 4000 cells, dt 0.1 ms, 0.2 ms delay, 1000 ms; all spikes and two analog cells per E/I population |
+
+The **new local comparison notebook** discovers all injectable, concrete neuron
+classes in the installed PyNN/Brian2 backend. Spike generators and the composable
+`PointNeuron` builder are excluded. With PyNN 0.13.0 there are 10 native classes,
+plus the 5 separately labeled CNT Brian2 adapters. The dashboard can run a selected
+subset. Both interfaces call `cnt_dashboard.cell_comparison.compare_cells`.
+
+This new comparison uses a current step rather than the original notebook's ten
+synaptic input spikes. Dimensional models receive a shared current in nA, converted
+to pA/uA where needed. CNT's scaled Izhikevich input has an independent model-unit
+amplitude. Native parameters/capacitances differ; equal current does not mean equal
+I/C or excitability, and synaptic-kernel variants can coincide without presynaptic
+input. Maximum PyNN dt is refined for HH (0.01 ms), AdEx (0.025 ms), and Izhikevich
+(0.05 ms); actual steps and native parameters are exported. The model inspector
+shows native equations, units and model-family publications.
+
+Recorded event counts also retain native detector semantics. PyNN `HH_cond_exp`
+can emit multiple above-threshold events during an action potential, whereas CNT's
+HH adapter counts crossings. The comparison labels these as recorded events rather
+than treating them as interchangeable physiological firing rates.
+
+Portability details for the source notebooks:
+
+- **Single clique:** its weight comments say nS, but native PyNN weights are uS;
+  the numerical preset values are preserved as 1 uS.
+- **Diverging:** its Gaussian distance expression is a deterministic cutoff, not
+  random connection sampling. PyNN rounds the requested delays to the simulation
+  clock; nearest-neighbor delays become 4 ms at the 1 ms notebook step.
+- **Small World:** PyNN/Brian2 leaves `SmallWorldConnector` unimplemented, so the
+  adapter explicitly builds distance `< degree` connections and rewires targets
+  over the full population. Self connections and parallel edges are retained.
+  The notebook's periodic length is 500, not 100. Delay draws retain the truncated
+  normal distribution (mean 1.5, SD 1.75, bounds 0.1–100 ms); backend delay rounding
+  depends on dt. Seeded local draws are not a bit-for-bit hardware reproduction.
+- **Jittered inputs:** a finer source clock avoids losing coincident-in-bin spikes
+  while the neuron clock retains the chosen dt. Requested input times, actual
+  recorded events and backend connection delays are available in the exports.
+- **STDP:** the original dendritic-delay fraction is 1; PyNN/Brian2 supports only
+  0. The page therefore links the original notebook for a SpiNNaker kernel.
+
+Rasters, selected-cell voltage/conductances, state heatmaps and connectivity views
+are available for the local network lessons. The Brian2 Balance lesson also shows
+the notebook's population PSTH and gE/(gE + gI) analysis. Configuration JSON, event CSV,
+exact connectivity CSV and analog NPZ downloads preserve completed-run values.
+
+The 4000-cell COBA preset is a longer CPU experiment. For a quick classroom check,
+start with 400 cells and 100 ms, then restore 4000 cells and 1000 ms for the script preset.
+
+The pre-existing single-cell and E/I notebook pages remain available:
 
 | Dashboard page | Notebook | Original preset |
 | --- | --- | --- |
@@ -205,7 +274,7 @@ The first use of a TVB class may compile its numerical implementation.
 | [`1981_MorrisLecar.ipynb`](../notebooks/numerical-methods/brian2/1981_MorrisLecar.ipynb) | Same two-state equations and parameters, reduced to one cell. Uses Brian2's NumPy runtime and RK4, avoiding the notebook's standalone C++ device switch. |
 | [`2007_Izhikevich.ipynb`](../notebooks/numerical-methods/brian2/2007_Izhikevich.ipynb) | Same voltage/recovery equations and spike rule, with a regular-spiking parameter set and a controlled input instead of a recurrent network and random drive. |
 | [`D_comparisonModels.ipynb`](../notebooks/numerical-methods/TVB/D_comparisonModels.ipynb) | Expands its explicit model list into discovery of the installed TVB registry. |
-| [`eg_testing-cell-models-network.ipynb`](../notebooks/intro/eg_testing-cell-models-network.ipynb) | Reference for a later model-comparison lesson; its SpiNNaker-specific `extra_models` are outside this first adapter. |
+| [`eg_testing-cell-models-network.ipynb`](../notebooks/intro/eg_testing-cell-models-network.ipynb) | Linked original SpiNNaker/synaptic-input comparison. The new local comparison notebook covers all locally supported models with a shared current step. |
 
 AdEx follows the [Brian2 Brette-Gerstner example](https://brian2.readthedocs.io/en/stable/examples/frompapers.Brette_Gerstner_2005.html).
 Brian2's [model examples](https://brian2.readthedocs.io/en/stable/examples/index.html)
@@ -277,6 +346,10 @@ These are software and numerical checks, not electrophysiological fitting valida
 The PyNN/Brian2 adapter deactivates empty native synapse objects before a run (they
 have no connections), and reads connectivity through PyNN's array format to handle
 single-connection projections correctly. Both cases are covered by the checks.
+Additional lesson checks verify clique receptors/current timing, feedforward decay,
+all five input events per active source, deterministic divergent connectivity,
+seeded small-world rewiring, current-unit conversion in the shared comparison,
+two-cell analog recording in the 4000-cell benchmark adapter, and link-only STDP.
 
 Verified with Python 3.12, PyNN 0.13.0, Brian2 2.10.1, TVB library 2.10.0, Streamlit 1.67.0,
 Plotly 7.1.0 and NumPy 2.3.5. In addition to the tests, all 28 installed TVB classes

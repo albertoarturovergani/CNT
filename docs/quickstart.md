@@ -246,7 +246,10 @@ chosen above. Open the printed local URL, or the platform's proxy URL for a host
 | --- | --- |
 | **Spiking → Single cell → Model explorer** | Select a model, read its equations, units and bibliography, edit inputs/parameters, then press **Run single neuron**. Use the voltage-reference checkboxes to show/hide levels without rerunning. |
 | **Spiking → Single cell → PyNN notebook** | Run the existing single-cell notebook experiment: an `IF_cond_exp` cell with AC and step currents. The controls start from the notebook's original values. |
-| **Spiking → Network** | Run the PyNN E/I network notebook. Change neuron count, connection probability, weights or Poisson stimulation; inspect rasters and the voltage/conductances of a recorded cell. |
+| **Spiking → Single cell → Single clique** | Run the two-cell excitatory/inhibitory circuit and inspect its current step, voltages, conductances and spike events. |
+| **Spiking → Single cell → Testing cell models network** | Select the local PyNN/Brian2 and CNT Brian2 models to compare under current injection. Open the linked new notebook to run the same comparison in Jupyter. |
+| **Spiking → Single cell → STDP** | Open the original notebook with a SpiNNaker kernel; its dendritic-delay learning rule is not replaced locally. |
+| **Spiking → Network** | Choose Decaying, Diverging, Small World, Balance network · Brian2 or the existing PyNN E/I benchmark. Run and inspect rasters, states, connectivity and exports. |
 | **Large Scale → Single node** | Select a TVB model, inspect equations/terms/references, then edit native parameters, duration, integration step and initial conditions. Press **Run isolated population** and choose the states to plot. |
 | **Large Scale → Network** | Placeholder for future TVB network experiments. |
 | **Catalogue & roadmap** | Expand this panel to check model availability. GLIF/E-GLIF and additional notebook adapters are still pending. |
@@ -259,6 +262,11 @@ NPZ (open with `numpy.load`); the CSV download contains the spike events. Its se
 random streams make dashboard reruns reproducible, but individual connections/spikes
 can differ from the original notebook's unseeded streams. Start with fewer neurons
 for a faster classroom exercise. These PyNN pages explicitly use Brian2 in local CPU mode.
+The **Balance network · Brian2** preset uses the script's 4000 cells and records
+analog traces from only two E/I cells; all-cell spike events remain available.
+The new [local cell-comparison notebook](../notebooks/intro/eg_testing-cell-models-local.ipynb)
+can run without SpiNNaker. It uses the same comparison engine as the dashboard and
+explains input units, model-specific integration steps and spike-detector differences.
 
 ## Reopen or update CNT
 
